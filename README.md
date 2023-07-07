@@ -1,2 +1,2 @@
-# git_branch_comparator_for_ecutest
-GitECUTESTBranchDiff
+# GitECUTESTBranchDiff
+
