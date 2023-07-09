@@ -1,4 +1,14 @@
-#!/bin/bash
+#!/bin/bash -xv
+
+# Save current path
+CURRENT_PATH=$(pwd)
+echo $CURRENT_PATH
+
+# Create tmp file
+#mkdir $(date "+tmp_%N")
+
+# Go to the path
+cd $1
 
 # Function to display help
 git_ecu_test_branch_diff_help() {
@@ -6,7 +16,7 @@ git_ecu_test_branch_diff_help() {
     echo "Description: This function accepts four arguments and performs a specific task."
     echo ""
     echo "Arguments:"
-    echo "  arg1: Description of argument 1"
+    echo "  arg1: Path of the repo"
     echo "  arg2: Description of argument 2"
     echo "  arg3: Description of argument 3"
     echo ""
@@ -27,9 +37,11 @@ git_ecu_test_branch_diff() {
     echo "Argument 2: $2"
     echo "Argument 3: $3"
 
-    # Perform the desired task using the arguments
+    # get the list of the file that changed
+    file_changed_list=$(git --no-pager  diff --name-only master experimental_branch)
     
     echo $(git log)
 }
 
 git_ecu_test_branch_diff
+cd -
