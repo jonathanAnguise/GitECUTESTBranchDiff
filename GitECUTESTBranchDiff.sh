@@ -5,7 +5,8 @@ CURRENT_PATH=$(pwd)
 echo $CURRENT_PATH
 
 # Create tmp file
-#mkdir $(date "+tmp_%N")
+folder_file_name=$(date "+tmp_%N")
+mkdir $folder_file_name
 
 # Go to the path
 cd $1
@@ -40,7 +41,11 @@ git_ecu_test_branch_diff() {
     # get the list of the file that changed
     file_changed_list=$(git --no-pager  diff --name-only master experimental_branch)
     
-    echo $(git log)
+    for file in $file_changed_list
+    do
+       cp $file $CURRENT_PATH/$folder_file_name
+       echo "$file_changed_list has been copied"
+    done
 }
 
 git_ecu_test_branch_diff
