@@ -3,13 +3,6 @@
 # ECU-TEST path
 ecu_test_path="/c/xxxxx/ecu.exe"
 
-# Go to the path
-cd "$1"
-
-# Create tmp file
-folder_file_name=$(date "+tmp_%N")
-mkdir "$folder_file_name"
-
 # Function to display help
 git_ecu_test_branch_diff_help() {
     echo "Usage: GitECUTESTBranchDiff.sh [path] [branch to compare]"
@@ -35,6 +28,13 @@ run_ecu_diff_on_files() {
 
 # Main function
 git_ecu_test_branch_diff() {
+    # Go to the path
+    cd "$1"
+
+    # Create tmp file
+    folder_file_name=$(date "+tmp_%N")
+    mkdir "$folder_file_name"
+
     # Check if the -h option is passed
     if [[ "$1" == "-h" ]]; then
 	git_ecu_test_branch_diff_help
@@ -44,17 +44,23 @@ git_ecu_test_branch_diff() {
     # get the list of the file that changed
     file_changed_list=$(git --no-pager  diff --name-only "$2")
 
+    # Change to the branch to copy
+    git switch "$2"
+
     
     for file in $file_changed_list
     do
        # Create a file with files to review
        echo $file >> $folder_file_name/files_to_review.txt
        # Copy files for manual diff compare
-       cp "$file" "$folder_file_name"
-       echo "$file_changed_list has been copied"
+       cp "$file" "$folder_file_name" -v
     done
 
-    run_ecu_diff_on_files "$file_changed_list"
+    # Please note, ECU-test has a bug and the cli does not work on version 2023.1
+    # run_ecu_diff_on_files "$file_changed_list"
+
+    # Return to the previous branch
+    git switch -
 }
 
 git_ecu_test_branch_diff "$1" "$2"
