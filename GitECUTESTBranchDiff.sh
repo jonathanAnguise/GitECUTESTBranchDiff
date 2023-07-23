@@ -28,18 +28,31 @@ run_ecu_diff_on_files() {
 
 # Main function
 git_ecu_test_branch_diff() {
+    # Check if the -h option is passed
+    if [[ "$1" == "-h" ]]; then
+        git_ecu_test_branch_diff_help
+        exit 0
+    fi
+
+    echo "Hello,"
+    echo "Please make sure your repo is clean and is on the main branch (and not the branch that you want to merge)"
+    echo "**********"
+    echo "You will review repo $1 on the branch $2"
+    read -p "Do you want to contine: Y/n: " answer
+
+    if [[ "$answer" == "Y" || "$answer" == "y" || "$answer" == "yes" ]]; then
+        echo "cool"
+    else
+        echo "Exiting..."
+        exit 0
+    fi
+
     # Go to the path
     cd "$1"
 
     # Create tmp file
     folder_file_name=$(date "+tmp_%N")
     mkdir "$folder_file_name"
-
-    # Check if the -h option is passed
-    if [[ "$1" == "-h" ]]; then
-	git_ecu_test_branch_diff_help
-        return
-    fi
 
     # get the list of the file that changed
     file_changed_list=$(git --no-pager  diff --name-only "$2")
