@@ -1,4 +1,4 @@
-#!/bin/bash -xv
+#!/bin/bash
 
 # ECU-TEST path
 ecu_test_path="/c/xxxxx/ecu.exe"
@@ -12,18 +12,20 @@ mkdir "$folder_file_name"
 
 # Function to display help
 git_ecu_test_branch_diff_help() {
-    echo "Usage: my_function.sh [path] [branch to compare]"
-    echo "Description: This function accepts four arguments and performs a specific task."
+    echo "Usage: GitECUTESTBranchDiff.sh [path] [branch to compare]"
+    echo "Description: Copy files modified between the current folder and a specified branch."
+    echo " * generate a tmp folder for a review with the tool compare in ecu-test"
+    echo " * generate a text file with the path of the file in order to find them fastly"
     echo ""
     echo "Arguments:"
     echo "  arg1: Path of the repo"
     echo "  arg2: branch to compare with the actual repo"
-    echo "  arg3: Description of argument 3"
     echo ""
     echo "Options:"
     echo "  -h: Display this help message"
 }
 
+# Please note, ECU-test has a bug and the cli does not work on version 2023.1
 run_ecu_diff_on_files() {
     for file in $1
     do 
@@ -35,18 +37,19 @@ run_ecu_diff_on_files() {
 git_ecu_test_branch_diff() {
     # Check if the -h option is passed
     if [[ "$1" == "-h" ]]; then
-        display_help
+	git_ecu_test_branch_diff_help
         return
     fi
 
     # get the list of the file that changed
     file_changed_list=$(git --no-pager  diff --name-only "$2")
 
-    # Create a file with files to review
-    echo $file_changed_list > $folder_file_name/files_to_review.txt
     
     for file in $file_changed_list
     do
+       # Create a file with files to review
+       echo $file >> $folder_file_name/files_to_review.txt
+       # Copy files for manual diff compare
        cp "$file" "$folder_file_name"
        echo "$file_changed_list has been copied"
     done
