@@ -35,7 +35,6 @@ Replace path with the desired path to store the temporary files, and branch_to_c
         
 ## 🙇 Author
 #### Jonathan Anguise
-Github: @jonathanAnguise
 Feel free to explore, use, and contribute to the GitECUTESTBranchDiff project! If you encounter any issues or have suggestions for improvements, don't hesitate to open an issue or create a pull request.
 
 Happy testing! 🚗🧪
