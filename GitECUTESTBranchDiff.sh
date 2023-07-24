@@ -5,20 +5,24 @@ ecu_test_path="/c/xxxxx/ecu.exe"
 
 # Function to display help
 git_ecu_test_branch_diff_help() {
-    echo "Usage: GitECUTESTBranchDiff.sh [path] [branch to compare]"
-    echo "Description: Copy files modified between the current folder and a specified branch."
-    echo " * generate a tmp folder for a review with the tool compare in ecu-test"
-    echo " * generate a text file with the path of the file in order to find them fastly"
-    echo ""
-    echo "Arguments:"
-    echo "  arg1: Path of the repo"
-    echo "  arg2: branch to compare with the actual repo"
-    echo ""
-    echo "Options:"
-    echo "  -h: Display this help message"
+    cat << EOF
+Usage: GitECUTESTBranchDiff.sh [path] [branch to compare]
+
+Description:
+  Copy files modified between the current folder and a specified branch.
+  - Generates a temporary folder for review using the compare tool in ECU-TEST.
+  - Generates a text file with the paths of the modified files for easy reference.
+
+Arguments:
+  arg1: Path of the Git repository
+  arg2: Branch to compare with the current branch
+
+Options:
+  -h: Display this help message
+EOF
 }
 
-# Please note, ECU-test has a bug and the cli does not work on version 2023.1
+# Function to open files for comparison in ECU-TEST
 run_ecu_diff_on_files() {
     for file in $1
     do 
@@ -37,24 +41,24 @@ git_ecu_test_branch_diff() {
     echo "Hello,"
     echo "Please make sure your repo is clean and is on the main branch (and not the branch that you want to merge)"
     echo "**********"
-    echo "You will review repo $1 on the branch $2"
-    read -p "Do you want to contine: Y/n: " answer
+    echo "You will review repository $1 on the branch $2"
+    read -p "Do you want to contine (Y/n)? " answer
 
     if [[ "$answer" == "Y" || "$answer" == "y" || "$answer" == "yes" ]]; then
-        echo "cool"
+        echo "Continuing..."
     else
         echo "Exiting..."
         exit 0
     fi
 
-    # Go to the path
-    cd "$1"
+    # Go to the repository path
+    cd "$1" || exit
 
-    # Create tmp file
+    # Create a temporary directory for review
     folder_file_name=$(date "+tmp_%N")
     mkdir "$folder_file_name"
 
-    # get the list of the file that changed
+    # get the list of files that changed
     file_changed_list=$(git --no-pager  diff --name-only "$2")
 
     # Change to the branch to copy
@@ -69,12 +73,13 @@ git_ecu_test_branch_diff() {
        cp "$file" "$folder_file_name" -v
     done
 
-    # Please note, ECU-test has a bug and the cli does not work on version 2023.1
+    # Run ECU-TEST compare (Note: ECU-TEST CLI may not work in version 2023.1)
     # run_ecu_diff_on_files "$file_changed_list"
 
     # Return to the previous branch
     git switch -
 }
 
+# Call the main function with arguments
 git_ecu_test_branch_diff "$1" "$2"
 cd -
